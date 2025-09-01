@@ -82,7 +82,7 @@ function App() {
       description: "Delivery platform with comprehensive backend architecture. Built complete order management system, user authentication, and delivery logistics using Laravel.",
       tech: ["Laravel", "PHP", "MySQL", "REST APIs"],
       color: "bg-emerald-50 border-emerald-200",
-      images: ["/images/movie_app1.png"],
+      images: ["/movie_app1.png"],
       video: "https://res.cloudinary.com/dyli6fvzh/video/upload/v1753803305/video_2025-07-05_14-40-43_b5iytc.mp4",
       repo: "https://github.com/your-username/olirab"
     },
@@ -92,7 +92,7 @@ function App() {
       description: "📱 mobile application allows users to discover, search, and view details about movies with a modern and intuitive interface.it integrates the latest Android development technologies for a smooth and responsive user experience.",
       tech: ["Kotlin", "Jetpack Compose", "MVI", "Retrofit", "Dagger Hilt", "Coroutines/Flow"],
       color: "bg-blue-50 border-blue-200",
-      images: ["/images/movieApp.png"],
+      images: ["/movieApp.png"],
       repo: "https://github.com/your-username/movie-app"
     },
 
@@ -101,7 +101,7 @@ function App() {
       description: "💸 Coin Tracker is a simple, user-friendly app built with Jetpack Compose and Material 3, designed to provide real-time cryptocurrency data.",
       tech: ["kotlin", "jetpack compose", "Ktor client", "koin DI", "coil"],
       color: "bg-purple-50 border-purple-200",
-      images: ["/images/crypto-trucker.png"],
+      images: ["/crypto-trucker.png"],
       repo: "https://github.com/your-username/ecommerce-app"
     }
   ];
@@ -185,7 +185,7 @@ function App() {
   const skills = [
     // Android Development Skills
     { name: "Kotlin", icon: Code, category: "android", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/7/74/Kotlin_Icon.png" },
-    { name: "Jetpack Compose", icon: Smartphone, category: "android", iconUrl: "images/compose.svg" },
+    { name: "Jetpack Compose", icon: Smartphone, category: "android", iconUrl: "/compose.svg" },
     { name: "Android SDK", icon: Smartphone, category: "android", iconUrl: "https://upload.wikimedia.org/wikipedia/commons/6/64/Android_logo_2019_%28stacked%29.svg" },
 
     {
@@ -345,7 +345,7 @@ function App() {
                   <div className="relative w-40 h-40 sm:w-48 sm:h-48 mx-auto rounded-3xl overflow-hidden shadow-2xl ring-4 ring-white/60">
                     <div className="absolute inset-0 grid place-items-center bg-gradient-to-tr from-emerald-500 to-green-600 text-white font-bold text-3xl">RB</div>
                     <img
-                      src="images/profile.jpg"
+                      src="/profile.jpg"
                       alt="Profile"
                       className="w-full h-full object-cover relative z-10"
                       loading="eager"
