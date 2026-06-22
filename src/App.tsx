@@ -1,15 +1,15 @@
 import { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { 
-  Download, 
-  Github, 
-  Linkedin, 
-  Mail, 
-  Menu, 
-  X, 
-  ArrowUpRight, 
-  GraduationCap, 
-  MapPin, 
+import {
+  Download,
+  Github,
+  Linkedin,
+  Mail,
+  Menu,
+  X,
+  ArrowUpRight,
+  GraduationCap,
+  MapPin,
   Phone,
   Code2,
   Server,
@@ -76,12 +76,12 @@ const getNiceTitleFromUrl = (url: string): string => {
 
 const getProjectMediaItems = (project: Project): MediaItem[] => {
   const items: MediaItem[] = [];
-  
+
   if (project.images) {
     project.images.forEach(img => {
       let category: 'overview' | 'teacher' | 'student' | 'general' = 'general';
       let title = 'Screenshot';
-      
+
       const lower = img.toLowerCase();
       if (lower.includes('websiteintro')) {
         category = 'overview';
@@ -93,7 +93,7 @@ const getProjectMediaItems = (project: Project): MediaItem[] => {
         category = 'student';
         title = getNiceTitleFromUrl(img);
       }
-      
+
       items.push({
         type: 'image',
         url: img,
@@ -109,11 +109,11 @@ const getProjectMediaItems = (project: Project): MediaItem[] => {
       category: 'overview'
     });
   }
-  
+
   const addVideo = (vidUrl: string) => {
     let category: 'overview' | 'teacher' | 'student' | 'general' = 'general';
     let title = 'Project Video Demo';
-    
+
     const lower = vidUrl.toLowerCase();
     if (lower.includes('-admin')) {
       category = 'teacher';
@@ -122,7 +122,7 @@ const getProjectMediaItems = (project: Project): MediaItem[] => {
       category = 'student';
       title = 'Student Portal Demo';
     }
-    
+
     items.push({
       type: 'video',
       url: vidUrl,
@@ -130,23 +130,23 @@ const getProjectMediaItems = (project: Project): MediaItem[] => {
       category
     });
   };
-  
+
   if (project.video) {
     addVideo(project.video);
   }
   if (project.videos) {
     project.videos.forEach(vid => addVideo(vid));
   }
-  
+
   return items;
 };
 
-const ProjectMedia = ({ 
-  project, 
-  onOpenGallery 
-}: { 
-  project: Project; 
-  onOpenGallery: (project: Project) => void; 
+const ProjectMedia = ({
+  project,
+  onOpenGallery
+}: {
+  project: Project;
+  onOpenGallery: (project: Project) => void;
 }) => {
   if (project.coverImage || (project.images && project.images.length > 0)) {
     const mainImage = project.coverImage || (project.images && project.images[0]) || '';
@@ -154,7 +154,7 @@ const ProjectMedia = ({
 
     let layer2Image = '';
     let layer3Image = '';
-    
+
     if (project.images && project.images.length > 1) {
       if (project.images.length >= 9) {
         layer2Image = project.images[8]; // student grading details (visual details)
@@ -166,7 +166,7 @@ const ProjectMedia = ({
     }
 
     return (
-      <div 
+      <div
         onClick={() => onOpenGallery(project)}
         className="w-full aspect-[16/10] sm:aspect-video md:aspect-[16/10] bg-[#fafaf9] border border-zinc-200/80 p-3 shadow-sm relative overflow-visible flex items-center justify-center min-h-[220px] cursor-pointer group select-none"
       >
@@ -178,7 +178,7 @@ const ProjectMedia = ({
         ) : (
           <div className="absolute inset-4 bg-white border border-zinc-200 shadow-sm rounded-xl overflow-hidden translate-x-4 translate-y-3.5 scale-[0.92] opacity-40 transition-all duration-300 group-hover:translate-x-6 group-hover:translate-y-5.5 group-hover:scale-[0.94] group-hover:opacity-50" />
         )}
-        
+
         {/* Layer 2 (Middle) */}
         {layer2Image ? (
           <div className="absolute inset-4 bg-white border border-zinc-200 shadow-sm rounded-xl overflow-hidden -translate-x-3 translate-y-1.5 -rotate-3 scale-[0.96] opacity-85 transition-all duration-300 group-hover:-translate-x-6 group-hover:translate-y-3 group-hover:-rotate-6 group-hover:opacity-95">
@@ -187,22 +187,22 @@ const ProjectMedia = ({
         ) : (
           <div className="absolute inset-4 bg-white border border-zinc-200 shadow-sm rounded-xl overflow-hidden translate-x-2 translate-y-1.5 scale-[0.96] opacity-75 transition-all duration-300 group-hover:translate-x-3 group-hover:translate-y-2.5 group-hover:scale-[0.98] group-hover:opacity-85" />
         )}
-        
+
         {/* Layer 1 (Front/Main) */}
         <div className="absolute inset-4 bg-white border border-zinc-250 shadow-md rounded-xl overflow-hidden transition-all duration-300 group-hover:-translate-y-1.5 group-hover:scale-[1.01] group-hover:shadow-xl">
-          <img 
-            src={mainImage} 
-            alt={project.title} 
+          <img
+            src={mainImage}
+            alt={project.title}
             className="w-full h-full object-cover select-none pointer-events-none"
             loading="lazy"
           />
-          
+
           {/* Overlay Tag */}
           <div className="absolute bottom-3 right-3 bg-zinc-950/85 backdrop-blur-md text-white text-[9px] font-extrabold uppercase tracking-widest px-2.5 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm border border-white/10 group-hover:bg-indigo-600 transition-colors duration-300 z-10">
             <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 group-hover:bg-white animate-pulse" />
             <span>+{totalItems - 1} Screens</span>
           </div>
-          
+
           {/* Eye Icon Hover Overlay */}
           <div className="absolute inset-0 bg-zinc-950/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
             <div className="bg-white/95 backdrop-blur-sm text-zinc-950 p-2.5 rounded-full shadow-lg border border-zinc-200/50 transform scale-75 group-hover:scale-100 transition-transform duration-300">
@@ -217,7 +217,7 @@ const ProjectMedia = ({
   if (project.video) {
     const isEmbed = project.video.includes('embed') || project.video.includes('player.cloudinary.com');
     return (
-      <div 
+      <div
         onClick={() => onOpenGallery(project)}
         className="w-full aspect-[16/10] sm:aspect-video md:aspect-[16/10] bg-[#fafaf9] border border-zinc-200/80 p-3 shadow-sm relative overflow-hidden flex items-center justify-center min-h-[220px] cursor-pointer group select-none"
       >
@@ -270,12 +270,12 @@ const ProjectMedia = ({
           </div>
           <span className="text-[8px] text-zinc-400 uppercase tracking-widest">Sys_Status</span>
         </div>
-        
+
         <div className="flex items-center space-x-2">
           <span className="px-1.5 py-0.5 bg-zinc-100 text-zinc-600 font-bold border border-zinc-200 text-[8px] uppercase">JOB</span>
           <span className="text-zinc-500 font-semibold">BullMQ::Workloads</span>
         </div>
-        
+
         <div className="text-zinc-400 pl-4 border-l border-zinc-200 space-y-1">
           <div><span className="text-zinc-650">status</span>: <span className="text-indigo-600 font-semibold">"Active"</span></div>
           <div><span className="text-zinc-650">engine</span>: <span className="text-zinc-600">"Ollama:LLM"</span></div>
@@ -285,7 +285,7 @@ const ProjectMedia = ({
           <div>]</div>
         </div>
       </div>
-      
+
       <div className="flex justify-between items-center text-[8px] text-zinc-400 border-t border-zinc-200 pt-2 mt-4">
         <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" /> REDIS UP</span>
         <span className="text-zinc-700 font-semibold">200 OK</span>
@@ -294,18 +294,18 @@ const ProjectMedia = ({
   );
 };
 
-const ProjectGalleryModal = ({ 
-  project, 
-  onClose 
-}: { 
-  project: Project; 
-  onClose: () => void; 
+const ProjectGalleryModal = ({
+  project,
+  onClose
+}: {
+  project: Project;
+  onClose: () => void;
 }) => {
   const mediaItems = getProjectMediaItems(project);
   const categories = Array.from(new Set(mediaItems.map(item => item.category)));
-  
-  const defaultTab = categories.includes('overview') 
-    ? 'overview' 
+
+  const defaultTab = categories.includes('overview')
+    ? 'overview'
     : categories.includes('student')
       ? 'student'
       : categories.includes('teacher')
@@ -399,14 +399,14 @@ const ProjectGalleryModal = ({
   };
 
   return (
-    <motion.div 
+    <motion.div
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
       className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 bg-zinc-950/45 backdrop-blur-md"
       onClick={onClose}
     >
-      <motion.div 
+      <motion.div
         initial={{ scale: 0.95, y: 15, opacity: 0 }}
         animate={{ scale: 1, y: 0, opacity: 1 }}
         exit={{ scale: 0.95, y: 15, opacity: 0 }}
@@ -427,8 +427,8 @@ const ProjectGalleryModal = ({
               {project.subtitle} • Interactive Project Gallery
             </p>
           </div>
-          
-          <button 
+
+          <button
             onClick={onClose}
             className="p-2 text-zinc-400 hover:text-zinc-950 border border-transparent hover:border-zinc-200 hover:bg-white rounded-full transition-all duration-200"
             aria-label="Close Gallery"
@@ -443,11 +443,10 @@ const ProjectGalleryModal = ({
               <button
                 key={cat}
                 onClick={() => setActiveTab(cat)}
-                className={`py-3.5 px-4 text-[10px] font-extrabold uppercase tracking-widest transition-all duration-200 flex items-center gap-2 border-b-2 -mb-[1px] ${
-                  activeTab === cat
+                className={`py-3.5 px-4 text-[10px] font-extrabold uppercase tracking-widest transition-all duration-200 flex items-center gap-2 border-b-2 -mb-[1px] ${activeTab === cat
                     ? 'border-indigo-600 text-indigo-600 font-black'
                     : 'border-transparent text-zinc-400 hover:text-zinc-800'
-                }`}
+                  }`}
               >
                 {getTabIcon(cat)}
                 <span>{getTabLabel(cat)}</span>
@@ -486,7 +485,7 @@ const ProjectGalleryModal = ({
                     )}
                   </div>
                 )}
-                
+
                 {activeTabMedia.length > 1 && (
                   <>
                     <button
@@ -516,11 +515,10 @@ const ProjectGalleryModal = ({
                   <button
                     key={idx}
                     onClick={() => setActiveMediaIndex(idx)}
-                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
-                      activeMediaIndex === idx
+                    className={`w-2 h-2 rounded-full transition-all duration-200 ${activeMediaIndex === idx
                         ? 'bg-indigo-600 w-4'
                         : 'bg-zinc-300 hover:bg-zinc-400'
-                    }`}
+                      }`}
                     aria-label={`Go to media ${idx + 1}`}
                   />
                 ))}
@@ -536,11 +534,11 @@ const ProjectGalleryModal = ({
                     {activeMedia.type === 'video' ? <Video size={10} /> : <Layers size={10} />}
                     {activeMedia.type === 'video' ? 'Video Demonstration' : 'Screen Capture'}
                   </span>
-                  
+
                   <h4 className="text-base font-extrabold text-zinc-950 tracking-tight leading-tight">
                     {activeMedia.title}
                   </h4>
-                  
+
                   <p className="text-xs text-zinc-550 leading-relaxed font-normal">
                     {getMediaDescription(activeMedia.url)}
                   </p>
@@ -554,17 +552,16 @@ const ProjectGalleryModal = ({
                   <h5 className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">
                     Screens in this Portal ({activeTabMedia.length})
                   </h5>
-                  
+
                   <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-3 gap-2">
                     {activeTabMedia.map((item, idx) => (
                       <button
                         key={idx}
                         onClick={() => setActiveMediaIndex(idx)}
-                        className={`aspect-video rounded-lg overflow-hidden border relative transition-all duration-200 group/thumb ${
-                          activeMediaIndex === idx
+                        className={`aspect-video rounded-lg overflow-hidden border relative transition-all duration-200 group/thumb ${activeMediaIndex === idx
                             ? 'border-indigo-600 ring-2 ring-indigo-600/10 shadow-sm'
                             : 'border-zinc-200 hover:border-zinc-400'
-                        }`}
+                          }`}
                       >
                         {item.type === 'image' ? (
                           <img
@@ -683,7 +680,7 @@ function App() {
         "Designed secure, role-based database schemas and workflows for teachers and students using SQLite, TypeORM, and JWT auth guards."
       ],
       tech: ["NestJS", "TypeScript", "Ollama", "BullMQ", "Redis", "WebSockets", "TypeORM", "SQLite", "JWT"],
-      link: "https://github.com/Raouf-boukhobza",
+      link: "https://github.com/Raouf-boukhobza/corrigo_back",
       coverImage: "https://res.cloudinary.com/dmtlqi1yz/image/upload/v1782084967/websiteIntro_roq9kt.png",
       images: [
         "https://res.cloudinary.com/dmtlqi1yz/image/upload/v1782084967/websiteIntro_roq9kt.png",
@@ -764,11 +761,11 @@ function App() {
 
   return (
     <div className="min-h-screen bg-[#fafaf9] text-zinc-900 selection:bg-indigo-55 selection:text-indigo-950 antialiased">
-      
+
       {/* Navigation Header */}
       <nav className="fixed top-6 left-0 right-0 z-50 px-6 sm:px-8 pointer-events-none">
         <div className="max-w-5xl mx-auto bg-white/95 backdrop-blur-md border border-zinc-200/80 shadow-[0_8px_30px_rgb(0,0,0,0.06)] rounded-full px-6 py-4 flex justify-between items-center pointer-events-auto">
-          
+
           <div className="flex items-center space-x-3 cursor-pointer" onClick={() => scrollToSection('hero')}>
             <span className="font-extrabold text-[13px] tracking-[0.05em] text-zinc-950">
               ABDERRAOUF BOUKHOBZA
@@ -785,11 +782,10 @@ function App() {
               <button
                 key={section}
                 onClick={() => scrollToSection(section)}
-                className={`text-[10px] font-bold uppercase tracking-widest transition-colors py-1 ${
-                  activeSection === section
+                className={`text-[10px] font-bold uppercase tracking-widest transition-colors py-1 ${activeSection === section
                     ? 'text-indigo-600'
                     : 'text-zinc-450 hover:text-zinc-950'
-                }`}
+                  }`}
               >
                 {section}
               </button>
@@ -820,7 +816,7 @@ function App() {
         {/* Mobile Navigation Dropdown */}
         <AnimatePresence>
           {isMenuOpen && (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: -10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
@@ -830,9 +826,8 @@ function App() {
                 <button
                   key={section}
                   onClick={() => scrollToSection(section)}
-                  className={`block w-full text-left text-[10px] font-bold uppercase tracking-widest ${
-                    activeSection === section ? 'text-indigo-600 pl-2 border-l border-indigo-600' : 'text-zinc-500'
-                  }`}
+                  className={`block w-full text-left text-[10px] font-bold uppercase tracking-widest ${activeSection === section ? 'text-indigo-600 pl-2 border-l border-indigo-600' : 'text-zinc-500'
+                    }`}
                 >
                   {section}
                 </button>
@@ -853,10 +848,10 @@ function App() {
       {/* Hero Section */}
       <section id="hero" className="pt-36 pb-20 md:pt-48 md:pb-28 px-6 sm:px-8 max-w-5xl mx-auto">
         <div className="grid md:grid-cols-12 gap-12 items-center">
-          
+
           {/* Hero Content */}
           <div className="md:col-span-7 space-y-8">
-            <motion.div 
+            <motion.div
               initial="initial"
               animate="animate"
               variants={fadeInUp}
@@ -866,14 +861,14 @@ function App() {
                 <span className="w-1 h-1 bg-indigo-600" />
                 AVAILABLE FOR ROLES
               </div>
-              
+
               <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tighter text-zinc-950 leading-[1.08]">
                 Designing clean, <br />
                 <span className="text-indigo-600">scalable backend</span> architectures.
               </h1>
             </motion.div>
 
-            <motion.p 
+            <motion.p
               initial="initial"
               animate="animate"
               variants={fadeInUp}
@@ -883,7 +878,7 @@ function App() {
               Hi, I'm <strong className="font-bold text-zinc-950">Abderraouf Boukhobza</strong>. I build high-performance APIs, asynchronous workloads with Redis job queues, and robust Android integrations following Clean Architecture guidelines.
             </motion.p>
 
-            <motion.div 
+            <motion.div
               initial="initial"
               animate="animate"
               variants={fadeInUp}
@@ -896,7 +891,7 @@ function App() {
               >
                 Get in Touch
               </button>
-              
+
               <a
                 href="/cv.pdf"
                 download="Raouf_Boukhobza_CV.pdf"
@@ -907,18 +902,18 @@ function App() {
               </a>
 
               <div className="flex items-center space-x-1.5 ml-2">
-                <a 
-                  href="https://github.com/Raouf-boukhobza" 
-                  target="_blank" 
+                <a
+                  href="https://github.com/Raouf-boukhobza"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="p-2 text-zinc-400 hover:text-zinc-950 transition-colors"
                   aria-label="GitHub Profile"
                 >
                   <Github size={17} />
                 </a>
-                <a 
-                  href="https://www.linkedin.com/in/raouf-boukhobza-570873300/" 
-                  target="_blank" 
+                <a
+                  href="https://www.linkedin.com/in/raouf-boukhobza-570873300/"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="p-2 text-zinc-400 hover:text-zinc-950 transition-colors"
                   aria-label="LinkedIn Profile"
@@ -931,7 +926,7 @@ function App() {
 
           {/* Hero Profile Image */}
           <div className="md:col-span-5 flex justify-center md:justify-end">
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.6, delay: 0.15 }}
@@ -964,7 +959,7 @@ function App() {
       <section id="about" className="py-24 border-t border-zinc-200/60 bg-white">
         <div className="max-w-5xl mx-auto px-6 sm:px-8">
           <div className="grid md:grid-cols-12 gap-12">
-            
+
             {/* Left Header */}
             <div className="md:col-span-4 space-y-2">
               <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400">01 / BIOGRAPHY</span>
@@ -1004,7 +999,7 @@ function App() {
                 </h3>
 
                 <div className="space-y-8 relative before:absolute before:left-[11px] before:top-2 before:bottom-2 before:w-[1px] before:bg-zinc-200">
-                  
+
                   {/* Master Degree */}
                   <div className="relative pl-8 group">
                     <div className="absolute left-[8.5px] top-2 w-2 h-2 rounded-full bg-indigo-600" />
@@ -1041,7 +1036,7 @@ function App() {
                 <h3 className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">Soft Skills</h3>
                 <div className="flex flex-wrap gap-1.5">
                   {["Problem Solving", "Teamwork & Collaboration", "Communication", "Time Management", "Adaptability", "Attention to Detail"].map((skill) => (
-                    <span 
+                    <span
                       key={skill}
                       className="px-2.5 py-1 border border-zinc-200 bg-[#fafaf9] text-zinc-700 text-xs font-semibold"
                     >
@@ -1060,7 +1055,7 @@ function App() {
       {/* Projects Section */}
       <section id="projects" className="py-24 border-t border-zinc-200/60 bg-[#fafaf9]">
         <div className="max-w-5xl mx-auto px-6 sm:px-8">
-          
+
           <div className="space-y-2 mb-16">
             <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400">02 / PORTFOLIO</span>
             <h2 className="text-2xl font-bold tracking-tight text-zinc-950">Selected Projects</h2>
@@ -1078,7 +1073,7 @@ function App() {
                 variants={fadeInUp}
                 className="grid lg:grid-cols-12 gap-8 lg:gap-12 pb-16 border-b border-zinc-200 last:border-b-0 last:pb-0"
               >
-                
+
                 {/* Info Column */}
                 <div className="lg:col-span-7 space-y-6">
                   <div className="space-y-3">
@@ -1087,10 +1082,10 @@ function App() {
                       <span>•</span>
                       <span>{project.year}</span>
                     </div>
-                    
-                    <a 
-                      href={project.link} 
-                      target="_blank" 
+
+                    <a
+                      href={project.link}
+                      target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center gap-2 group/title"
                     >
@@ -1143,7 +1138,7 @@ function App() {
       {/* Technical Matrix */}
       <section id="skills" className="py-24 border-t border-zinc-200/60 bg-white">
         <div className="max-w-5xl mx-auto px-6 sm:px-8">
-          
+
           <div className="space-y-2 mb-16">
             <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400">03 / SKILLS MATRIX</span>
             <h2 className="text-2xl font-bold tracking-tight text-zinc-950">Technical Skills</h2>
@@ -1154,7 +1149,7 @@ function App() {
             {skillGroups.map((group) => {
               const IconComponent = group.icon;
               return (
-                <div 
+                <div
                   key={group.title}
                   className="bg-white border border-zinc-200/80 p-6 rounded-2xl shadow-sm hover:border-indigo-600/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between"
                 >
@@ -1167,7 +1162,7 @@ function App() {
                         {group.title}
                       </h3>
                     </div>
-                    
+
                     <div className="flex flex-wrap gap-1.5">
                       {group.skills.map((skill) => (
                         <span
@@ -1212,9 +1207,9 @@ function App() {
       {/* Contact Section */}
       <section id="contact" className="py-24 border-t border-zinc-200/60 bg-[#fafaf9]">
         <div className="max-w-5xl mx-auto px-6 sm:px-8">
-          
+
           <div className="grid md:grid-cols-12 gap-12">
-            
+
             {/* Left Info Card */}
             <div className="md:col-span-5 flex flex-col justify-between">
               <div className="space-y-8">
@@ -1249,9 +1244,9 @@ function App() {
               </div>
 
               <div className="flex items-center space-x-4 pt-8 border-t border-zinc-200 mt-12">
-                <a 
-                  href="https://github.com/Raouf-boukhobza" 
-                  target="_blank" 
+                <a
+                  href="https://github.com/Raouf-boukhobza"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-950 transition-colors"
                 >
@@ -1259,9 +1254,9 @@ function App() {
                   GitHub
                 </a>
                 <span className="text-zinc-300">|</span>
-                <a 
-                  href="https://www.linkedin.com/in/raouf-boukhobza-570873300/" 
-                  target="_blank" 
+                <a
+                  href="https://www.linkedin.com/in/raouf-boukhobza-570873300/"
+                  target="_blank"
                   rel="noopener noreferrer"
                   className="inline-flex items-center gap-1.5 text-xs font-bold uppercase tracking-widest text-zinc-500 hover:text-zinc-950 transition-colors"
                 >
@@ -1274,7 +1269,7 @@ function App() {
             {/* Right Contact Form */}
             <div className="md:col-span-7 bg-white border border-zinc-200 p-8 sm:p-10 shadow-sm">
               <form onSubmit={handleFormSubmit} className="space-y-6">
-                
+
                 <div className="space-y-2">
                   <label htmlFor="name" className="block text-[8px] font-bold uppercase tracking-widest text-zinc-400">Your Name</label>
                   <input
