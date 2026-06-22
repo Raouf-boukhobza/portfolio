@@ -17,7 +17,15 @@ import {
   Database,
   Cpu,
   Layers,
-  LucideIcon
+  LucideIcon,
+  ChevronLeft,
+  ChevronRight,
+  Play,
+  Eye,
+  Video,
+  User,
+  Monitor,
+  Info
 } from 'lucide-react';
 
 const fadeInUp = {
@@ -34,7 +42,570 @@ interface Project {
   tech: string[];
   link: string;
   video?: string;
+  coverImage?: string;
+  images?: string[];
+  videos?: string[];
 }
+
+interface SkillGroup {
+  title: string;
+  icon: LucideIcon;
+  skills: string[];
+}
+
+interface MediaItem {
+  type: 'image' | 'video';
+  url: string;
+  title: string;
+  category: 'overview' | 'teacher' | 'student' | 'general';
+}
+
+const getNiceTitleFromUrl = (url: string): string => {
+  try {
+    const filename = url.substring(url.lastIndexOf('/') + 1);
+    const nameWithoutExt = filename.split('.')[0];
+    const mainPart = nameWithoutExt.split('_')[0];
+    return mainPart
+      .split('-')
+      .map(word => word.charAt(0).toUpperCase() + word.slice(1))
+      .join(' ');
+  } catch (e) {
+    return 'Project Screen';
+  }
+};
+
+const getProjectMediaItems = (project: Project): MediaItem[] => {
+  const items: MediaItem[] = [];
+  
+  if (project.images) {
+    project.images.forEach(img => {
+      let category: 'overview' | 'teacher' | 'student' | 'general' = 'general';
+      let title = 'Screenshot';
+      
+      const lower = img.toLowerCase();
+      if (lower.includes('websiteintro')) {
+        category = 'overview';
+        title = 'Website Overview';
+      } else if (lower.includes('-admin')) {
+        category = 'teacher';
+        title = getNiceTitleFromUrl(img);
+      } else if (lower.includes('student')) {
+        category = 'student';
+        title = getNiceTitleFromUrl(img);
+      }
+      
+      items.push({
+        type: 'image',
+        url: img,
+        title,
+        category
+      });
+    });
+  } else if (project.coverImage) {
+    items.push({
+      type: 'image',
+      url: project.coverImage,
+      title: 'Cover Image',
+      category: 'overview'
+    });
+  }
+  
+  const addVideo = (vidUrl: string) => {
+    let category: 'overview' | 'teacher' | 'student' | 'general' = 'general';
+    let title = 'Project Video Demo';
+    
+    const lower = vidUrl.toLowerCase();
+    if (lower.includes('-admin')) {
+      category = 'teacher';
+      title = 'Teacher / Admin Demo';
+    } else if (lower.includes('student')) {
+      category = 'student';
+      title = 'Student Portal Demo';
+    }
+    
+    items.push({
+      type: 'video',
+      url: vidUrl,
+      title,
+      category
+    });
+  };
+  
+  if (project.video) {
+    addVideo(project.video);
+  }
+  if (project.videos) {
+    project.videos.forEach(vid => addVideo(vid));
+  }
+  
+  return items;
+};
+
+const ProjectMedia = ({ 
+  project, 
+  onOpenGallery 
+}: { 
+  project: Project; 
+  onOpenGallery: (project: Project) => void; 
+}) => {
+  if (project.coverImage || (project.images && project.images.length > 0)) {
+    const mainImage = project.coverImage || (project.images && project.images[0]) || '';
+    const totalItems = (project.images ? project.images.length : 0) + (project.video ? 1 : 0);
+
+    let layer2Image = '';
+    let layer3Image = '';
+    
+    if (project.images && project.images.length > 1) {
+      if (project.images.length >= 9) {
+        layer2Image = project.images[8]; // student grading details (visual details)
+        layer3Image = project.images[3]; // dashboard 1 (graphs)
+      } else {
+        layer2Image = project.images[1];
+        layer3Image = project.images[2] || '';
+      }
+    }
+
+    return (
+      <div 
+        onClick={() => onOpenGallery(project)}
+        className="w-full aspect-[16/10] sm:aspect-video md:aspect-[16/10] bg-[#fafaf9] border border-zinc-200/80 p-3 shadow-sm relative overflow-visible flex items-center justify-center min-h-[220px] cursor-pointer group select-none"
+      >
+        {/* Layer 3 (Back) */}
+        {layer3Image ? (
+          <div className="absolute inset-4 bg-white border border-zinc-200 shadow-sm rounded-xl overflow-hidden translate-x-3 -translate-y-2.5 rotate-3 scale-[0.93] opacity-65 transition-all duration-300 group-hover:translate-x-6 group-hover:-translate-y-5 group-hover:rotate-6 group-hover:opacity-85">
+            <img src={layer3Image} alt="" className="w-full h-full object-cover select-none pointer-events-none filter brightness-95" />
+          </div>
+        ) : (
+          <div className="absolute inset-4 bg-white border border-zinc-200 shadow-sm rounded-xl overflow-hidden translate-x-4 translate-y-3.5 scale-[0.92] opacity-40 transition-all duration-300 group-hover:translate-x-6 group-hover:translate-y-5.5 group-hover:scale-[0.94] group-hover:opacity-50" />
+        )}
+        
+        {/* Layer 2 (Middle) */}
+        {layer2Image ? (
+          <div className="absolute inset-4 bg-white border border-zinc-200 shadow-sm rounded-xl overflow-hidden -translate-x-3 translate-y-1.5 -rotate-3 scale-[0.96] opacity-85 transition-all duration-300 group-hover:-translate-x-6 group-hover:translate-y-3 group-hover:-rotate-6 group-hover:opacity-95">
+            <img src={layer2Image} alt="" className="w-full h-full object-cover select-none pointer-events-none filter brightness-95" />
+          </div>
+        ) : (
+          <div className="absolute inset-4 bg-white border border-zinc-200 shadow-sm rounded-xl overflow-hidden translate-x-2 translate-y-1.5 scale-[0.96] opacity-75 transition-all duration-300 group-hover:translate-x-3 group-hover:translate-y-2.5 group-hover:scale-[0.98] group-hover:opacity-85" />
+        )}
+        
+        {/* Layer 1 (Front/Main) */}
+        <div className="absolute inset-4 bg-white border border-zinc-250 shadow-md rounded-xl overflow-hidden transition-all duration-300 group-hover:-translate-y-1.5 group-hover:scale-[1.01] group-hover:shadow-xl">
+          <img 
+            src={mainImage} 
+            alt={project.title} 
+            className="w-full h-full object-cover select-none pointer-events-none"
+            loading="lazy"
+          />
+          
+          {/* Overlay Tag */}
+          <div className="absolute bottom-3 right-3 bg-zinc-950/85 backdrop-blur-md text-white text-[9px] font-extrabold uppercase tracking-widest px-2.5 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm border border-white/10 group-hover:bg-indigo-600 transition-colors duration-300 z-10">
+            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 group-hover:bg-white animate-pulse" />
+            <span>+{totalItems - 1} Screens</span>
+          </div>
+          
+          {/* Eye Icon Hover Overlay */}
+          <div className="absolute inset-0 bg-zinc-950/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
+            <div className="bg-white/95 backdrop-blur-sm text-zinc-950 p-2.5 rounded-full shadow-lg border border-zinc-200/50 transform scale-75 group-hover:scale-100 transition-transform duration-300">
+              <Eye size={16} className="text-indigo-600" />
+            </div>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (project.video) {
+    const isEmbed = project.video.includes('embed') || project.video.includes('player.cloudinary.com');
+    return (
+      <div 
+        onClick={() => onOpenGallery(project)}
+        className="w-full aspect-[16/10] sm:aspect-video md:aspect-[16/10] bg-[#fafaf9] border border-zinc-200/80 p-3 shadow-sm relative overflow-hidden flex items-center justify-center min-h-[220px] cursor-pointer group select-none"
+      >
+        <div className="w-full h-full bg-black overflow-hidden relative border border-zinc-200 shadow-sm rounded-lg">
+          {isEmbed ? (
+            <iframe
+              src={`${project.video}&autoplay=0&muted=1&loop=1`}
+              className="w-full h-full object-cover select-none pointer-events-none opacity-85 group-hover:opacity-100 transition-opacity duration-200"
+              style={{ border: 0 }}
+              allow="autoplay; encrypted-media"
+              title="video-thumbnail"
+            />
+          ) : (
+            <video
+              className="w-full h-full object-contain opacity-85 group-hover:opacity-100 transition-opacity duration-200"
+              autoPlay
+              muted
+              loop
+              playsInline
+              preload="auto"
+              crossOrigin="anonymous"
+            >
+              <source src={project.video} type="video/mp4" />
+            </video>
+          )}
+
+          <div className="absolute inset-0 bg-zinc-950/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center">
+            <div className="bg-white/95 backdrop-blur-sm text-zinc-950 p-2.5 rounded-full shadow-lg border border-zinc-200/50 transform scale-75 group-hover:scale-100 transition-transform duration-300">
+              <Play size={16} className="text-indigo-600 fill-indigo-600" />
+            </div>
+          </div>
+
+          <div className="absolute bottom-3 right-3 bg-zinc-950/85 backdrop-blur-md text-white text-[9px] font-extrabold uppercase tracking-widest px-2.5 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm border border-white/10 group-hover:bg-indigo-600 transition-colors duration-300">
+            <Video size={10} className="text-indigo-400 group-hover:text-white" />
+            <span>Watch Demo</span>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="w-full font-mono text-[10px] text-zinc-700 overflow-hidden border border-zinc-200 bg-white p-4 flex flex-col justify-between self-stretch select-none shadow-sm min-h-[220px]">
+      <div className="space-y-2">
+        <div className="flex items-center justify-between border-b border-zinc-200 pb-2 mb-2">
+          <div className="flex items-center space-x-1">
+            <span className="w-1.5 h-1.5 rounded-full bg-zinc-300" />
+            <span className="w-1.5 h-1.5 rounded-full bg-zinc-300" />
+            <span className="w-1.5 h-1.5 rounded-full bg-zinc-300" />
+          </div>
+          <span className="text-[8px] text-zinc-400 uppercase tracking-widest">Sys_Status</span>
+        </div>
+        
+        <div className="flex items-center space-x-2">
+          <span className="px-1.5 py-0.5 bg-zinc-100 text-zinc-600 font-bold border border-zinc-200 text-[8px] uppercase">JOB</span>
+          <span className="text-zinc-500 font-semibold">BullMQ::Workloads</span>
+        </div>
+        
+        <div className="text-zinc-400 pl-4 border-l border-zinc-200 space-y-1">
+          <div><span className="text-zinc-650">status</span>: <span className="text-indigo-600 font-semibold">"Active"</span></div>
+          <div><span className="text-zinc-650">engine</span>: <span className="text-zinc-600">"Ollama:LLM"</span></div>
+          <div><span className="text-zinc-650">cache</span>: [</div>
+          <div className="pl-4 text-zinc-555">"PessimisticRowLock: OK",</div>
+          <div className="pl-4 text-indigo-600 font-semibold">"RedisInvalidationTrigger: ON"</div>
+          <div>]</div>
+        </div>
+      </div>
+      
+      <div className="flex justify-between items-center text-[8px] text-zinc-400 border-t border-zinc-200 pt-2 mt-4">
+        <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" /> REDIS UP</span>
+        <span className="text-zinc-700 font-semibold">200 OK</span>
+      </div>
+    </div>
+  );
+};
+
+const ProjectGalleryModal = ({ 
+  project, 
+  onClose 
+}: { 
+  project: Project; 
+  onClose: () => void; 
+}) => {
+  const mediaItems = getProjectMediaItems(project);
+  const categories = Array.from(new Set(mediaItems.map(item => item.category)));
+  
+  const defaultTab = categories.includes('overview') 
+    ? 'overview' 
+    : categories.includes('student')
+      ? 'student'
+      : categories.includes('teacher')
+        ? 'teacher'
+        : categories[0] || 'general';
+
+  const [activeTab, setActiveTab] = useState<string>(defaultTab);
+  const activeTabMedia = mediaItems.filter(item => item.category === activeTab);
+  const [activeMediaIndex, setActiveMediaIndex] = useState<number>(0);
+
+  useEffect(() => {
+    setActiveMediaIndex(0);
+  }, [activeTab]);
+
+  const activeMedia = activeTabMedia[activeMediaIndex];
+
+  const handleNext = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (activeTabMedia.length > 1) {
+      setActiveMediaIndex((prev) => (prev + 1) % activeTabMedia.length);
+    }
+  };
+
+  const handlePrev = (e?: React.MouseEvent) => {
+    e?.stopPropagation();
+    if (activeTabMedia.length > 1) {
+      setActiveMediaIndex((prev) => (prev - 1 + activeTabMedia.length) % activeTabMedia.length);
+    }
+  };
+
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') onClose();
+      if (e.key === 'ArrowRight') handleNext();
+      if (e.key === 'ArrowLeft') handlePrev();
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [activeTabMedia, activeMediaIndex]);
+
+  const getTabLabel = (cat: string) => {
+    if (cat === 'overview') return 'Overview';
+    if (cat === 'teacher') return 'Teacher Panel (Admin)';
+    if (cat === 'student') return 'Student Portal';
+    return 'Gallery';
+  };
+
+  const getTabIcon = (cat: string) => {
+    if (cat === 'overview') return <Info size={13} />;
+    if (cat === 'teacher') return <Monitor size={13} />;
+    if (cat === 'student') return <User size={13} />;
+    return <Layers size={13} />;
+  };
+
+  const getMediaDescription = (url: string) => {
+    const lower = url.toLowerCase();
+    if (lower.includes('websiteintro')) {
+      return "Corrigo Landing Page - Features a clean, high-conversion presentation showcasing how artificial intelligence transforms manual exam grading and student performance tracking.";
+    }
+    if (lower.includes('signin-student')) {
+      return "Student Authentication Portal - Secure login screen enabling students to verify credentials before entering the grading space.";
+    }
+    if (lower.includes('singin-admin')) {
+      return "Teacher Sign In Gateway - Administrative authentication screen with JWT protection and role-based permissions routing.";
+    }
+    if (lower.includes('dashboard1-admin')) {
+      return "Main Administrative Dashboard - Real-time statistics, average grading times, aggregate scores, and quick action widgets for managing active exams.";
+    }
+    if (lower.includes('dashboard2-admin')) {
+      return "Extended Academic Analytics - Visual metrics outlining classroom grade brackets, failure/pass rates, and section comparisons.";
+    }
+    if (lower.includes('create-section1-admin')) {
+      return "Exam Section Wizard (Step 1) - Setup module to specify section rules, grading criteria, and base weights for qualitative AI evaluations.";
+    }
+    if (lower.includes('create-section2-admin')) {
+      return "Exam Section Wizard (Step 2) - Detailed question mapping tool that lets teachers align section rubrics to curriculum benchmarks.";
+    }
+    if (lower.includes('manage-student-admin')) {
+      return "Class Roster & Enrollment - Student administration workspace to enroll students, view active sections, and track grading completion.";
+    }
+    if (lower.includes('student-grading-details-admin')) {
+      return "Qualitative AI Feedback Editor - Interactive grading panel displaying student exam responses alongside AI-generated score suggestions and annotations.";
+    }
+    if (lower.includes('section-details-admin')) {
+      return "Section Metrics - Diagnostic panel highlighting student submission statuses, individual scores, and specific learning objective logs.";
+    }
+    if (lower.includes('system-grading-student')) {
+      return "Automated Grading Lifecycle - System walkthrough demonstrating how answers are sent to the NestJS pipeline, processed by Ollama LLM, and synced to students in real-time.";
+    }
+    return "Application interface showcasing clean design, responsive structure, and backend API integration.";
+  };
+
+  return (
+    <motion.div 
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      exit={{ opacity: 0 }}
+      className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 md:p-10 bg-zinc-950/45 backdrop-blur-md"
+      onClick={onClose}
+    >
+      <motion.div 
+        initial={{ scale: 0.95, y: 15, opacity: 0 }}
+        animate={{ scale: 1, y: 0, opacity: 1 }}
+        exit={{ scale: 0.95, y: 15, opacity: 0 }}
+        transition={{ type: "spring", damping: 25, stiffness: 220 }}
+        className="bg-white border border-zinc-200/80 w-full max-w-5xl h-[85vh] rounded-3xl shadow-2xl flex flex-col overflow-hidden text-zinc-900"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <div className="px-6 py-4 border-b border-zinc-150 flex items-center justify-between bg-zinc-50/60 select-none">
+          <div className="space-y-1">
+            <div className="flex items-center gap-2">
+              <span className="inline-block w-2 h-2 rounded-full bg-indigo-600" />
+              <h3 className="text-sm font-black tracking-tight uppercase text-zinc-950">{project.title}</h3>
+              <span className="text-[10px] text-zinc-400 font-bold bg-zinc-100 border border-zinc-200 px-2 py-0.5 rounded">
+                {project.year}
+              </span>
+            </div>
+            <p className="text-[11px] text-zinc-500 font-normal">
+              {project.subtitle} • Interactive Project Gallery
+            </p>
+          </div>
+          
+          <button 
+            onClick={onClose}
+            className="p-2 text-zinc-400 hover:text-zinc-950 border border-transparent hover:border-zinc-200 hover:bg-white rounded-full transition-all duration-200"
+            aria-label="Close Gallery"
+          >
+            <X size={18} />
+          </button>
+        </div>
+
+        {categories.length > 1 && (
+          <div className="px-6 bg-zinc-50/30 border-b border-zinc-150 flex items-center space-x-1 select-none">
+            {categories.map((cat) => (
+              <button
+                key={cat}
+                onClick={() => setActiveTab(cat)}
+                className={`py-3.5 px-4 text-[10px] font-extrabold uppercase tracking-widest transition-all duration-200 flex items-center gap-2 border-b-2 -mb-[1px] ${
+                  activeTab === cat
+                    ? 'border-indigo-600 text-indigo-600 font-black'
+                    : 'border-transparent text-zinc-400 hover:text-zinc-800'
+                }`}
+              >
+                {getTabIcon(cat)}
+                <span>{getTabLabel(cat)}</span>
+              </button>
+            ))}
+          </div>
+        )}
+
+        <div className="flex-1 min-h-0 grid lg:grid-cols-12 overflow-hidden">
+          <div className="lg:col-span-8 bg-zinc-50/50 p-6 flex flex-col items-center justify-center relative overflow-hidden group/preview border-r border-zinc-150">
+            {activeMedia ? (
+              <div className="w-full h-full flex items-center justify-center relative select-none">
+                {activeMedia.type === 'image' ? (
+                  <img
+                    src={activeMedia.url}
+                    alt={activeMedia.title}
+                    className="max-h-[55vh] lg:max-h-[60vh] object-contain rounded-2xl shadow-md border border-zinc-200/50 bg-white"
+                  />
+                ) : (
+                  <div className="w-full max-w-2xl aspect-video bg-black rounded-2xl overflow-hidden shadow-lg border border-zinc-200 relative">
+                    {activeMedia.url.includes('embed') || activeMedia.url.includes('player.cloudinary.com') ? (
+                      <iframe
+                        src={`${activeMedia.url}&autoplay=1&muted=0`}
+                        className="w-full h-full border-0"
+                        allow="autoplay; encrypted-media; picture-in-picture"
+                        allowFullScreen
+                        title={activeMedia.title}
+                      />
+                    ) : (
+                      <video
+                        src={activeMedia.url}
+                        controls
+                        autoPlay
+                        className="w-full h-full object-contain"
+                      />
+                    )}
+                  </div>
+                )}
+                
+                {activeTabMedia.length > 1 && (
+                  <>
+                    <button
+                      onClick={handlePrev}
+                      className="absolute left-2 bg-white/90 hover:bg-white text-zinc-700 hover:text-indigo-600 p-2.5 rounded-full border border-zinc-200 shadow-md transition-all duration-200 hover:scale-105"
+                      aria-label="Previous Media"
+                    >
+                      <ChevronLeft size={18} />
+                    </button>
+                    <button
+                      onClick={handleNext}
+                      className="absolute right-2 bg-white/90 hover:bg-white text-zinc-700 hover:text-indigo-600 p-2.5 rounded-full border border-zinc-200 shadow-md transition-all duration-200 hover:scale-105"
+                      aria-label="Next Media"
+                    >
+                      <ChevronRight size={18} />
+                    </button>
+                  </>
+                )}
+              </div>
+            ) : (
+              <div className="text-zinc-400 text-xs font-semibold">No media selected</div>
+            )}
+
+            {activeTabMedia.length > 1 && (
+              <div className="absolute bottom-4 flex justify-center space-x-1.5 select-none bg-zinc-950/5 px-3 py-1.5 rounded-full backdrop-blur-sm">
+                {activeTabMedia.map((_, idx) => (
+                  <button
+                    key={idx}
+                    onClick={() => setActiveMediaIndex(idx)}
+                    className={`w-2 h-2 rounded-full transition-all duration-200 ${
+                      activeMediaIndex === idx
+                        ? 'bg-indigo-600 w-4'
+                        : 'bg-zinc-300 hover:bg-zinc-400'
+                    }`}
+                    aria-label={`Go to media ${idx + 1}`}
+                  />
+                ))}
+              </div>
+            )}
+          </div>
+
+          <div className="lg:col-span-4 p-6 flex flex-col justify-between overflow-y-auto bg-white">
+            <div className="space-y-6">
+              {activeMedia ? (
+                <div className="space-y-3">
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-indigo-50 border border-indigo-100 text-indigo-700 text-[9px] font-black uppercase tracking-wider rounded-md">
+                    {activeMedia.type === 'video' ? <Video size={10} /> : <Layers size={10} />}
+                    {activeMedia.type === 'video' ? 'Video Demonstration' : 'Screen Capture'}
+                  </span>
+                  
+                  <h4 className="text-base font-extrabold text-zinc-950 tracking-tight leading-tight">
+                    {activeMedia.title}
+                  </h4>
+                  
+                  <p className="text-xs text-zinc-550 leading-relaxed font-normal">
+                    {getMediaDescription(activeMedia.url)}
+                  </p>
+                </div>
+              ) : (
+                <div className="text-zinc-400 text-xs">Select a thumbnail to view details.</div>
+              )}
+
+              {activeTabMedia.length > 1 && (
+                <div className="space-y-3 pt-4 border-t border-zinc-100 select-none">
+                  <h5 className="text-[9px] font-bold uppercase tracking-widest text-zinc-400">
+                    Screens in this Portal ({activeTabMedia.length})
+                  </h5>
+                  
+                  <div className="grid grid-cols-3 sm:grid-cols-4 lg:grid-cols-3 gap-2">
+                    {activeTabMedia.map((item, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => setActiveMediaIndex(idx)}
+                        className={`aspect-video rounded-lg overflow-hidden border relative transition-all duration-200 group/thumb ${
+                          activeMediaIndex === idx
+                            ? 'border-indigo-600 ring-2 ring-indigo-600/10 shadow-sm'
+                            : 'border-zinc-200 hover:border-zinc-400'
+                        }`}
+                      >
+                        {item.type === 'image' ? (
+                          <img
+                            src={item.url}
+                            alt={item.title}
+                            className="w-full h-full object-cover group-hover/thumb:scale-105 transition-transform duration-200"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-zinc-950 flex items-center justify-center relative">
+                            <Video size={14} className="text-zinc-400" />
+                            <div className="absolute inset-0 bg-black/40 flex items-center justify-center opacity-0 group-hover/thumb:opacity-100 transition-opacity">
+                              <Play size={10} className="text-white fill-white" />
+                            </div>
+                          </div>
+                        )}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
+            <div className="mt-8 pt-4 border-t border-zinc-100 flex flex-col gap-3 text-[10px] text-zinc-400 font-bold uppercase tracking-widest select-none">
+              <div className="flex items-center justify-between">
+                <span>Repository</span>
+                <a
+                  href={project.link}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  className="text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1 font-extrabold"
+                >
+                  GitHub <ArrowUpRight size={12} />
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </motion.div>
+    </motion.div>
+  );
+};
 
 interface SkillGroup {
   title: string;
@@ -48,6 +619,7 @@ function App() {
   const [formSubmitted, setFormSubmitted] = useState(false);
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [imageError, setImageError] = useState(false);
+  const [selectedProject, setSelectedProject] = useState<Project | null>(null);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -111,7 +683,21 @@ function App() {
         "Designed secure, role-based database schemas and workflows for teachers and students using SQLite, TypeORM, and JWT auth guards."
       ],
       tech: ["NestJS", "TypeScript", "Ollama", "BullMQ", "Redis", "WebSockets", "TypeORM", "SQLite", "JWT"],
-      link: "https://github.com/Raouf-boukhobza"
+      link: "https://github.com/Raouf-boukhobza",
+      coverImage: "https://res.cloudinary.com/dmtlqi1yz/image/upload/v1782084967/websiteIntro_roq9kt.png",
+      images: [
+        "https://res.cloudinary.com/dmtlqi1yz/image/upload/v1782084967/websiteIntro_roq9kt.png",
+        "https://res.cloudinary.com/dmtlqi1yz/image/upload/v1782084967/singIn-admin_iqz8yy.png",
+        "https://res.cloudinary.com/dmtlqi1yz/image/upload/v1782084968/signin-student_olebgn.png",
+        "https://res.cloudinary.com/dmtlqi1yz/image/upload/v1782084968/dashboard1-admin_cxfoil.png",
+        "https://res.cloudinary.com/dmtlqi1yz/image/upload/v1782084967/dashboard2-admin_lz1pom.png",
+        "https://res.cloudinary.com/dmtlqi1yz/image/upload/v1782084967/manage-student-admin_gro05k.png",
+        "https://res.cloudinary.com/dmtlqi1yz/image/upload/v1782084968/create-section1-admin_es0w2t.png",
+        "https://res.cloudinary.com/dmtlqi1yz/image/upload/v1782084968/create-section2-admin_ohkrml.png",
+        "https://res.cloudinary.com/dmtlqi1yz/image/upload/v1782084967/student-grading-details-admin_zjmi2f.png",
+        "https://res.cloudinary.com/dmtlqi1yz/image/upload/v1782084967/section-details-admin_uw3gnj.png"
+      ],
+      video: "https://player.cloudinary.com/embed/?cloud_name=dmtlqi1yz&public_id=system-grading-student_jhwl21"
     },
     {
       title: "E-Commerce Backend Infrastructure",
@@ -545,60 +1131,8 @@ function App() {
 
                 {/* Visual Media Column */}
                 <div className="lg:col-span-5 flex items-center justify-center">
-                  <div className="w-full bg-[#fafaf9] border border-zinc-200/80 p-4 shadow-sm relative overflow-hidden flex items-center justify-center min-h-[220px]">
-                    
-                    {/* Video Rendering */}
-                    {project.video ? (
-                      <div className="w-full aspect-video bg-black overflow-hidden relative border border-zinc-200 shadow-sm">
-                        <video
-                          className="w-full h-full object-contain"
-                          autoPlay
-                          muted
-                          loop
-                          playsInline
-                          preload="auto"
-                          crossOrigin="anonymous"
-                        >
-                          <source src={project.video} type="video/mp4" />
-                        </video>
-                      </div>
-                    ) : (
-                      /* Clean Light-Theme Mock API terminal visualizer */
-                      <div className="w-full font-mono text-[10px] text-zinc-700 overflow-hidden border border-zinc-200 bg-white p-4 flex flex-col justify-between self-stretch select-none shadow-sm">
-                        <div className="space-y-2">
-                          <div className="flex items-center justify-between border-b border-zinc-200 pb-2 mb-2">
-                            <div className="flex items-center space-x-1">
-                              <span className="w-1.5 h-1.5 rounded-full bg-zinc-300" />
-                              <span className="w-1.5 h-1.5 rounded-full bg-zinc-300" />
-                              <span className="w-1.5 h-1.5 rounded-full bg-zinc-300" />
-                            </div>
-                            <span className="text-[8px] text-zinc-400 uppercase tracking-widest">Sys_Status</span>
-                          </div>
-                          
-                          <div className="flex items-center space-x-2">
-                            <span className="px-1.5 py-0.5 bg-zinc-100 text-zinc-600 font-bold border border-zinc-200 text-[8px] uppercase">JOB</span>
-                            <span className="text-zinc-500 font-semibold">BullMQ::Workloads</span>
-                          </div>
-                          
-                          <div className="text-zinc-400 pl-4 border-l border-zinc-200 space-y-1">
-                            <div><span className="text-zinc-600">status</span>: <span className="text-indigo-600 font-semibold">"Active"</span></div>
-                            <div><span className="text-zinc-650">engine</span>: <span className="text-zinc-600">"Ollama:LLM"</span></div>
-                            <div><span className="text-zinc-650">cache</span>: [</div>
-                            <div className="pl-4 text-zinc-555">"PessimisticRowLock: OK",</div>
-                            <div className="pl-4 text-indigo-600 font-semibold">"RedisInvalidationTrigger: ON"</div>
-                            <div>]</div>
-                          </div>
-                        </div>
-                        
-                        <div className="flex justify-between items-center text-[8px] text-zinc-400 border-t border-zinc-200 pt-2 mt-4">
-                          <span className="flex items-center gap-1"><span className="w-1.5 h-1.5 rounded-full bg-indigo-600 animate-pulse" /> REDIS UP</span>
-                          <span className="text-zinc-700 font-semibold">200 OK</span>
-                        </div>
-                      </div>
-                    )}
-                  </div>
+                  <ProjectMedia project={project} onOpenGallery={setSelectedProject} />
                 </div>
-
               </motion.div>
             ))}
           </div>
@@ -814,6 +1348,14 @@ function App() {
         </div>
       </section>
 
+      <AnimatePresence>
+        {selectedProject && (
+          <ProjectGalleryModal
+            project={selectedProject}
+            onClose={() => setSelectedProject(null)}
+          />
+        )}
+      </AnimatePresence>
     </div>
   );
 }
