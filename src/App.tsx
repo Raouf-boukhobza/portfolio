@@ -395,6 +395,9 @@ const ProjectGalleryModal = ({
     if (lower.includes('system-grading-student')) {
       return "Automated Grading Lifecycle - System walkthrough demonstrating how answers are sent to the NestJS pipeline, processed by Ollama LLM, and synced to students in real-time.";
     }
+    if (lower.includes('as6p01') || lower.includes('beautyluxe')) {
+      return "BeautyLuxe Admin Panel - Video walkthrough demonstrating the administration portal's interface for managing products, tracking orders, and viewing real-time store metrics.";
+    }
     return "Application interface showcasing clean design, responsive structure, and backend API integration.";
   };
 
@@ -586,14 +589,14 @@ const ProjectGalleryModal = ({
 
             <div className="mt-8 pt-4 border-t border-zinc-100 flex flex-col gap-3 text-[10px] text-zinc-400 font-bold uppercase tracking-widest select-none">
               <div className="flex items-center justify-between">
-                <span>Repository</span>
+                <span>{project.link.includes('github.com') ? 'Repository' : 'Website'}</span>
                 <a
                   href={project.link}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="text-indigo-600 hover:text-indigo-800 transition-colors flex items-center gap-1 font-extrabold"
                 >
-                  GitHub <ArrowUpRight size={12} />
+                  {project.link.includes('github.com') ? 'GitHub' : 'Live Demo'} <ArrowUpRight size={12} />
                 </a>
               </div>
             </div>
@@ -708,7 +711,8 @@ function App() {
         "Secured resources using NestJS Throttler (rate limiting), RBAC permissions guards, and Pino-structured logging containerized in Docker."
       ],
       tech: ["NestJS", "TypeScript", "MySQL", "TypeORM", "Redis", "Docker", "Google Sheets API", "JWT", "Pino"],
-      link: "https://github.com/Raouf-boukhobza"
+      link: "https://beautyluxe.vercel.app/home",
+      video: "https://res.cloudinary.com/dyli6fvzh/video/upload/v1782588709/Screen_Recording_2026-06-26_at_14.41.50_as6p01.mp4"
     },
     {
       title: "Restaurant Ordering Platform Backend",
@@ -875,7 +879,7 @@ function App() {
               transition={{ delay: 0.1 }}
               className="text-lg text-zinc-500 font-normal leading-relaxed max-w-2xl"
             >
-              Hi, I'm <strong className="font-bold text-zinc-950">Abderraouf Boukhobza</strong>. I build high-performance APIs, asynchronous workloads with Redis job queues, and robust Android integrations following Clean Architecture guidelines.
+              Hi, I'm <strong className="font-bold text-zinc-950">Abderraouf Boukhobza</strong>. I am a software engineering student specializing in Artificial Intelligence. I focus on building high-performance backend systems, scalable architectures, and robust mobile applications following Clean Architecture guidelines.
             </motion.p>
 
             <motion.div
