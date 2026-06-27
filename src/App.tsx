@@ -879,7 +879,7 @@ function App() {
               transition={{ delay: 0.1 }}
               className="text-lg text-zinc-500 font-normal leading-relaxed max-w-2xl"
             >
-              Hi, I'm <strong className="font-bold text-zinc-950">Abderraouf Boukhobza</strong>. I am a software engineering student specializing in Artificial Intelligence. I focus on building high-performance backend systems, scalable architectures, and robust mobile applications following Clean Architecture guidelines.
+              Hi, I'm <strong className="font-bold text-zinc-950">Abderraouf Boukhobza</strong>. I am a software engineer specialized in backend development, currently studying artificial intelligence at university. I build high-performance APIs, scalable systems, and robust mobile integrations.
             </motion.p>
 
             <motion.div
