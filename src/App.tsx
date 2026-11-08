@@ -8,14 +8,12 @@ import {
   Menu,
   X,
   ArrowUpRight,
-  GraduationCap,
   MapPin,
   Phone,
   Code2,
   Server,
   Smartphone,
   Database,
-  Cpu,
   Layers,
   LucideIcon,
   ChevronLeft,
@@ -25,12 +23,21 @@ import {
   Video,
   User,
   Monitor,
-  Info
+  Info,
+  Sparkles,
+  BrainCircuit,
+  ShieldCheck,
+  GitBranch
 } from 'lucide-react';
+import { RiveCaseStudy } from './components/RiveCaseStudy';
 
 const fadeInUp = {
   initial: { opacity: 0, y: 15 },
-  animate: { opacity: 1, y: 0, transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] } }
+  animate: {
+    opacity: 1,
+    y: 0,
+    transition: { duration: 0.7, ease: [0.16, 1, 0.3, 1] as [number, number, number, number] }
+  }
 };
 
 interface Project {
@@ -45,6 +52,7 @@ interface Project {
   coverImage?: string;
   images?: string[];
   videos?: string[];
+  caseStudy?: boolean;
 }
 
 interface SkillGroup {
@@ -69,7 +77,7 @@ const getNiceTitleFromUrl = (url: string): string => {
       .split('-')
       .map(word => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
-  } catch (e) {
+  } catch {
     return 'Project Screen';
   }
 };
@@ -151,6 +159,7 @@ const ProjectMedia = ({
   if (project.coverImage || (project.images && project.images.length > 0)) {
     const mainImage = project.coverImage || (project.images && project.images[0]) || '';
     const totalItems = (project.images ? project.images.length : 0) + (project.video ? 1 : 0);
+    const isCaseStudy = Boolean(project.caseStudy);
 
     let layer2Image = '';
     let layer3Image = '';
@@ -198,15 +207,15 @@ const ProjectMedia = ({
           />
 
           {/* Overlay Tag */}
-          <div className="absolute bottom-3 right-3 bg-zinc-950/85 backdrop-blur-md text-white text-[9px] font-extrabold uppercase tracking-widest px-2.5 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm border border-white/10 group-hover:bg-indigo-600 transition-colors duration-300 z-10">
-            <span className="w-1.5 h-1.5 rounded-full bg-indigo-400 group-hover:bg-white animate-pulse" />
-            <span>+{totalItems - 1} Screens</span>
+          <div className={`absolute bottom-3 right-3 bg-zinc-950/85 backdrop-blur-md text-white text-[9px] font-extrabold uppercase tracking-widest px-2.5 py-1.5 rounded-full flex items-center gap-1.5 shadow-sm border border-white/10 transition-colors duration-300 z-10 ${isCaseStudy ? 'group-hover:bg-emerald-600' : 'group-hover:bg-indigo-600'}`}>
+            <span className={`w-1.5 h-1.5 rounded-full group-hover:bg-white animate-pulse ${isCaseStudy ? 'bg-emerald-400' : 'bg-indigo-400'}`} />
+            <span>{isCaseStudy ? 'Open case study' : `+${totalItems - 1} Screens`}</span>
           </div>
 
           {/* Eye Icon Hover Overlay */}
           <div className="absolute inset-0 bg-zinc-950/20 opacity-0 group-hover:opacity-100 transition-opacity duration-300 flex items-center justify-center z-20">
             <div className="bg-white/95 backdrop-blur-sm text-zinc-950 p-2.5 rounded-full shadow-lg border border-zinc-200/50 transform scale-75 group-hover:scale-100 transition-transform duration-300">
-              <Eye size={16} className="text-indigo-600" />
+              {isCaseStudy ? <Sparkles size={16} className="text-emerald-600" /> : <Eye size={16} className="text-indigo-600" />}
             </div>
           </div>
         </div>
@@ -620,6 +629,7 @@ function App() {
   const [formData, setFormData] = useState({ name: '', email: '', message: '' });
   const [imageError, setImageError] = useState(false);
   const [selectedProject, setSelectedProject] = useState<Project | null>(null);
+  const [caseStudyOpen, setCaseStudyOpen] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -672,6 +682,34 @@ function App() {
   };
 
   const projects: Project[] = [
+    {
+      title: "Rive — AI Receptionist for WhatsApp",
+      subtitle: "Full-Stack AI Product · Multi-Tenant SaaS",
+      year: "2026",
+      description: "A production-shaped AI front desk for dental clinics. Patients book, reschedule, cancel and ask questions on WhatsApp, while the clinic gets a live inbox, a day schedule, a verified answer bank and a guarded human takeover path.",
+      bullets: [
+        "Designed a multi-tenant NestJS backend with PostgreSQL row-level security, Redis tenant caching and 207 automated tests.",
+        "Built a stateless LangGraph agent with five tools that grounds every answer in a per-tenant pgvector knowledge base before booking or escalating.",
+        "Separated LLM work from delivery with a transactional outbox, three BullMQ queues, four idempotency layers and stale-send recovery.",
+        "Modeled WhatsApp delivery as a webhook-driven state machine (sent → delivered → read) with early-receipt caching and a near-real-time inbox.",
+        "Enforced booking integrity in PostgreSQL with an exclusion constraint; concurrent requests fall back to alternative doctors and slots.",
+        "Shipped a React 19 operations frontend (inbox, schedule, answer bank) with a full demo adapter so the product is reviewable without a backend.",
+        "Added GitHub Actions CI covering typecheck, lint, the 207-test backend suite and the production build; the CD pipeline is in progress."
+      ],
+      tech: ["NestJS", "PostgreSQL", "Row-Level Security", "Redis", "BullMQ", "LangGraph", "pgvector", "Gemini", "WhatsApp Cloud API", "React 19", "TypeScript", "Docker", "GitHub Actions"],
+      link: "https://rivee.vercel.app/",
+      coverImage: "/projects/rive/screens/rive-dashboard.jpg",
+      images: [
+        "/projects/rive/screens/rive-dashboard.jpg",
+        "/projects/rive/screens/rive-inbox.jpg",
+        "/projects/rive/screens/rive-knowledge.jpg",
+        "/projects/rive/screens/rive-appointments.jpg",
+        "/projects/rive/screens/rive-ai-conversation.jpg",
+        "/projects/rive/screens/rive-human-takeover.jpg",
+        "/projects/rive/screens/rive-appointment-lifecycle.jpg"
+      ],
+      caseStudy: true
+    },
     {
       title: "AI-Powered Grading & Exam Management",
       subtitle: "Academic Project",
@@ -739,7 +777,17 @@ function App() {
     {
       title: "Backend Engineering",
       icon: Server,
-      skills: ["NestJS", "Laravel", "REST APIs", "JWT Auth", "Node.js"]
+      skills: ["NestJS", "Laravel", "Node.js", "REST APIs", "JWT Auth", "Prisma ORM", "WhatsApp Cloud API", "Webhooks"]
+    },
+    {
+      title: "AI Engineering",
+      icon: BrainCircuit,
+      skills: ["LangGraph", "LangChain", "RAG", "pgvector", "Gemini", "Tool Calling", "Prompt Engineering"]
+    },
+    {
+      title: "Data, Caching & Queues",
+      icon: Database,
+      skills: ["PostgreSQL", "Redis", "BullMQ", "MySQL", "MongoDB", "SQLite", "Caching Strategies"]
     },
     {
       title: "Mobile Development",
@@ -747,19 +795,19 @@ function App() {
       skills: ["Android SDK", "Jetpack Compose", "Kotlin Coroutines", "HTTP Clients"]
     },
     {
-      title: "Databases & Caching",
-      icon: Database,
-      skills: ["MySQL", "SQLite", "MongoDB", "Redis", "Caching Strategies"]
-    },
-    {
-      title: "Infrastructure & Tools",
-      icon: Cpu,
-      skills: ["Docker", "Docker Compose", "Git", "GitHub", "Postman", "BullMQ"]
+      title: "Infrastructure & DevOps",
+      icon: GitBranch,
+      skills: ["Docker", "Docker Compose", "GitHub Actions", "CI/CD", "Vercel", "Swagger", "Bull Board", "Git"]
     },
     {
       title: "Software Architecture",
       icon: Layers,
-      skills: ["Clean Architecture", "SOLID Principles", "MVVM", "Repository Pattern"]
+      skills: ["Modular Monolith", "Clean Architecture", "SOLID", "Multi-Tenancy", "Event-Driven Design", "Repository Pattern"]
+    },
+    {
+      title: "Reliability & Security",
+      icon: ShieldCheck,
+      skills: ["Row-Level Security", "Transactional Outbox", "Idempotency", "Optimistic Locking", "HMAC Verification", "Real-Time Delivery States", "Graceful Degradation"]
     }
   ];
 
@@ -850,112 +898,114 @@ function App() {
       </nav>
 
       {/* Hero Section */}
-      <section id="hero" className="pt-36 pb-20 md:pt-48 md:pb-28 px-6 sm:px-8 max-w-5xl mx-auto">
-        <div className="grid md:grid-cols-12 gap-12 items-center">
+      <section id="hero" className="relative overflow-hidden pt-36 pb-20 md:pt-48 md:pb-28">
+        <div className="relative z-10 max-w-5xl mx-auto px-6 sm:px-8">
+          <div className="grid md:grid-cols-12 gap-12 items-center">
 
-          {/* Hero Content */}
-          <div className="md:col-span-7 space-y-8">
-            <motion.div
-              initial="initial"
-              animate="animate"
-              variants={fadeInUp}
-              className="space-y-4"
-            >
-              <div className="inline-flex items-center gap-2 text-[9px] font-bold tracking-[0.2em] uppercase text-zinc-400">
-                <span className="w-1 h-1 bg-indigo-600" />
-                AVAILABLE FOR ROLES
-              </div>
-
-              <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tighter text-zinc-950 leading-[1.08]">
-                Designing clean, <br />
-                <span className="text-indigo-600">scalable backend</span> architectures.
-              </h1>
-            </motion.div>
-
-            <motion.p
-              initial="initial"
-              animate="animate"
-              variants={fadeInUp}
-              transition={{ delay: 0.1 }}
-              className="text-lg text-zinc-500 font-normal leading-relaxed max-w-2xl"
-            >
-              Hi, I'm <strong className="font-bold text-zinc-950">Abderraouf Boukhobza</strong>. I am a software engineer specialized in backend development, currently studying artificial intelligence at university. I build high-performance APIs, scalable systems, and robust mobile integrations.
-            </motion.p>
-
-            <motion.div
-              initial="initial"
-              animate="animate"
-              variants={fadeInUp}
-              transition={{ delay: 0.2 }}
-              className="flex flex-wrap items-center gap-4 pt-2"
-            >
-              <button
-                onClick={() => scrollToSection('contact')}
-                className="px-6 py-3.5 bg-zinc-950 hover:bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-widest transition-all duration-200"
+            {/* Hero Content */}
+            <div className="md:col-span-7 space-y-8">
+              <motion.div
+                initial="initial"
+                animate="animate"
+                variants={fadeInUp}
+                className="space-y-4"
               >
-                Get in Touch
-              </button>
-
-              <a
-                href="/cv.pdf"
-                download="Raouf_Boukhobza_CV.pdf"
-                className="inline-flex items-center gap-2 px-6 py-3.5 border border-zinc-200 hover:border-zinc-950 hover:bg-white text-[10px] font-bold uppercase tracking-widest transition-all duration-200"
-              >
-                <Download size={13} className="text-zinc-450" />
-                Resume
-              </a>
-
-              <div className="flex items-center space-x-1.5 ml-2">
-                <a
-                  href="https://github.com/Raouf-boukhobza"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 text-zinc-400 hover:text-zinc-950 transition-colors"
-                  aria-label="GitHub Profile"
-                >
-                  <Github size={17} />
-                </a>
-                <a
-                  href="https://www.linkedin.com/in/raouf-boukhobza-570873300/"
-                  target="_blank"
-                  rel="noopener noreferrer"
-                  className="p-2 text-zinc-400 hover:text-zinc-950 transition-colors"
-                  aria-label="LinkedIn Profile"
-                >
-                  <Linkedin size={17} />
-                </a>
-              </div>
-            </motion.div>
-          </div>
-
-          {/* Hero Profile Image */}
-          <div className="md:col-span-5 flex justify-center md:justify-end">
-            <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.6, delay: 0.15 }}
-              className="relative"
-            >
-              <div className="absolute inset-0 border border-zinc-200 translate-x-3 translate-y-3" />
-              <div className="relative w-72 h-72 sm:w-80 sm:h-80 md:w-96 md:h-96 bg-[#fafaf9] border border-zinc-200 p-2.5 shadow-sm">
-                <div className="w-full h-full overflow-hidden bg-zinc-100 relative">
-                  {!imageError ? (
-                    <img
-                      src="/profile.png"
-                      alt="Abderraouf Boukhobza"
-                      className="w-full h-full object-cover"
-                      onError={() => setImageError(true)}
-                    />
-                  ) : (
-                    <div className="absolute inset-0 flex items-center justify-center bg-zinc-50 font-bold text-zinc-300 text-3xl uppercase tracking-wider select-none">
-                      RB
-                    </div>
-                  )}
+                <div className="inline-flex items-center gap-2 text-[9px] font-bold tracking-[0.2em] uppercase text-zinc-400">
+                  <span className="w-1 h-1 bg-indigo-600" />
+                  AVAILABLE FOR ROLES
                 </div>
-              </div>
-            </motion.div>
-          </div>
 
+                <h1 className="text-4xl sm:text-6xl font-extrabold tracking-tighter text-zinc-950 leading-[1.08]">
+                  Designing clean, <br />
+                  <span className="text-indigo-600">scalable backend</span> architectures.
+                </h1>
+              </motion.div>
+
+              <motion.p
+                initial="initial"
+                animate="animate"
+                variants={fadeInUp}
+                transition={{ delay: 0.1 }}
+                className="text-lg text-zinc-500 font-normal leading-relaxed max-w-2xl"
+              >
+                Hi, I'm <strong className="font-bold text-zinc-950">Abderraouf Boukhobza</strong>. I am a software engineer focused on backend and AI systems, currently pursuing a Master's in Artificial Intelligence. I build high-performance APIs, multi-tenant SaaS backends and LLM-powered products.
+              </motion.p>
+
+              <motion.div
+                initial="initial"
+                animate="animate"
+                variants={fadeInUp}
+                transition={{ delay: 0.2 }}
+                className="flex flex-wrap items-center gap-4 pt-2"
+              >
+                <button
+                  onClick={() => scrollToSection('contact')}
+                  className="px-6 py-3.5 bg-zinc-950 hover:bg-indigo-600 text-white text-[10px] font-bold uppercase tracking-widest transition-all duration-200"
+                >
+                  Get in Touch
+                </button>
+
+                <a
+                  href="/cv.pdf"
+                  download="Raouf_Boukhobza_CV.pdf"
+                  className="inline-flex items-center gap-2 px-6 py-3.5 border border-zinc-200 hover:border-zinc-950 hover:bg-white text-[10px] font-bold uppercase tracking-widest transition-all duration-200"
+                >
+                  <Download size={13} className="text-zinc-450" />
+                  Resume
+                </a>
+
+                <div className="flex items-center space-x-1.5 ml-2">
+                  <a
+                    href="https://github.com/Raouf-boukhobza"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 text-zinc-400 hover:text-zinc-950 transition-colors"
+                    aria-label="GitHub Profile"
+                  >
+                    <Github size={17} />
+                  </a>
+                  <a
+                    href="https://www.linkedin.com/in/raouf-boukhobza-570873300/"
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="p-2 text-zinc-400 hover:text-zinc-950 transition-colors"
+                    aria-label="LinkedIn Profile"
+                  >
+                    <Linkedin size={17} />
+                  </a>
+                </div>
+              </motion.div>
+            </div>
+
+            {/* Hero Profile Image */}
+            <div className="md:col-span-5 flex justify-center md:justify-end">
+              <motion.div
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: 0.15 }}
+                className="relative"
+              >
+                <div className="absolute inset-0 border border-zinc-200 translate-x-3 translate-y-3" />
+                <div className="relative w-72 h-72 sm:w-80 sm:h-80 md:w-96 md:h-96 bg-[#fafaf9] border border-zinc-200 p-2.5 shadow-sm">
+                  <div className="w-full h-full overflow-hidden bg-zinc-100 relative">
+                    {!imageError ? (
+                      <img
+                        src="/profile.png"
+                        alt="Abderraouf Boukhobza"
+                        className="w-full h-full object-cover"
+                        onError={() => setImageError(true)}
+                      />
+                    ) : (
+                      <div className="absolute inset-0 flex items-center justify-center bg-zinc-50 font-bold text-zinc-300 text-3xl uppercase tracking-wider select-none">
+                        RB
+                      </div>
+                    )}
+                  </div>
+                </div>
+              </motion.div>
+            </div>
+
+          </div>
         </div>
       </section>
 
@@ -978,7 +1028,7 @@ function App() {
                   Software Engineering student pursuing a Master's Degree in Artificial Intelligence, with hands-on experience in backend and Android development.
                 </p>
                 <p>
-                  My technical background includes building REST APIs, database-driven applications, and scalable backend services using NestJS, Laravel, MySQL, and Redis. I also develop native Android applications with Kotlin and Jetpack Compose, following Clean Architecture principles.
+                  My technical background includes building REST APIs, multi-tenant backends and AI-powered products with NestJS, PostgreSQL, Redis, BullMQ and LangGraph. I designed and shipped <strong className="font-semibold text-zinc-800">Rive</strong>, a WhatsApp AI receptionist with row-level security, a transactional outbox and a per-tenant pgvector knowledge base. I also develop native Android applications with Kotlin and Jetpack Compose, following Clean Architecture principles.
                 </p>
                 <p>
                   I am constantly learning, building projects, and seeking opportunities to grow as a software engineer while contributing to real-world products and teams.
@@ -1063,6 +1113,9 @@ function App() {
           <div className="space-y-2 mb-16">
             <span className="text-[9px] font-bold uppercase tracking-[0.2em] text-zinc-400">02 / PORTFOLIO</span>
             <h2 className="text-2xl font-bold tracking-tight text-zinc-950">Selected Projects</h2>
+            <p className="max-w-2xl pt-1 text-sm font-normal leading-relaxed text-zinc-500">
+              A flagship AI product case study followed by selected backend, AI and mobile work.
+            </p>
             <div className="w-12 h-[1.5px] bg-zinc-950" />
           </div>
 
@@ -1081,10 +1134,16 @@ function App() {
                 {/* Info Column */}
                 <div className="lg:col-span-7 space-y-6">
                   <div className="space-y-3">
-                    <div className="flex items-center space-x-3 text-[9px] font-bold uppercase tracking-widest text-zinc-400">
+                    <div className="flex flex-wrap items-center gap-x-3 gap-y-2 text-[9px] font-bold uppercase tracking-widest text-zinc-400">
                       <span>{project.subtitle}</span>
                       <span>•</span>
                       <span>{project.year}</span>
+                      {project.caseStudy && (
+                        <span className="inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-2.5 py-1 text-[8px] font-extrabold tracking-[0.16em] text-emerald-700">
+                          <Sparkles size={9} />
+                          Flagship case study
+                        </span>
+                      )}
                     </div>
 
                     <a
@@ -1107,11 +1166,34 @@ function App() {
                   <ul className="space-y-3">
                     {project.bullets.map((bullet, i) => (
                       <li key={i} className="flex items-start gap-3 text-sm font-normal text-zinc-500 leading-relaxed">
-                        <span className="w-1.5 h-1.5 rounded-full bg-indigo-600 mt-2 flex-shrink-0" />
+                        <span className={`w-1.5 h-1.5 rounded-full mt-2 flex-shrink-0 ${project.caseStudy ? 'bg-emerald-600' : 'bg-indigo-600'}`} />
                         <span>{bullet}</span>
                       </li>
                     ))}
                   </ul>
+
+                  {project.caseStudy && (
+                    <button
+                      type="button"
+                      onClick={() => setCaseStudyOpen(true)}
+                      className="group/study flex w-full items-center justify-between gap-4 rounded-2xl border border-emerald-200 bg-emerald-50/60 p-4 text-left transition-all duration-300 hover:border-emerald-400 hover:bg-emerald-50"
+                    >
+                      <span className="flex items-start gap-3">
+                        <span className="mt-0.5 flex size-8 shrink-0 items-center justify-center rounded-lg bg-white text-emerald-700 shadow-sm">
+                          <Sparkles size={14} />
+                        </span>
+                        <span>
+                          <span className="block text-[11px] font-bold text-zinc-950">
+                            Read the full system design case study
+                          </span>
+                          <span className="mt-0.5 block text-[10px] leading-4 text-zinc-500">
+                            7 diagrams · RLS, outbox, LangGraph and RAG
+                          </span>
+                        </span>
+                      </span>
+                      <ArrowUpRight size={16} className="shrink-0 text-emerald-700 transition-transform duration-300 group-hover/study:-translate-y-0.5 group-hover/study:translate-x-0.5" />
+                    </button>
+                  )}
 
                   <div className="space-y-2 pt-2">
                     <span className="block text-[8px] font-bold text-zinc-400 uppercase tracking-widest">Technologies Integration</span>
@@ -1130,7 +1212,16 @@ function App() {
 
                 {/* Visual Media Column */}
                 <div className="lg:col-span-5 flex items-center justify-center">
-                  <ProjectMedia project={project} onOpenGallery={setSelectedProject} />
+                  <ProjectMedia
+                    project={project}
+                    onOpenGallery={(selected) => {
+                      if (selected.caseStudy) {
+                        setCaseStudyOpen(true);
+                      } else {
+                        setSelectedProject(selected);
+                      }
+                    }}
+                  />
                 </div>
               </motion.div>
             ))}
@@ -1149,13 +1240,13 @@ function App() {
             <div className="w-12 h-[1.5px] bg-zinc-950 mt-4" />
           </div>
 
-          <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-6">
+          <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-4">
             {skillGroups.map((group) => {
               const IconComponent = group.icon;
               return (
                 <div
                   key={group.title}
-                  className="bg-white border border-zinc-200/80 p-6 rounded-2xl shadow-sm hover:border-indigo-600/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between"
+                  className="bg-white border border-zinc-200/80 p-5 rounded-2xl shadow-sm hover:border-indigo-600/40 hover:shadow-md transition-all duration-300 flex flex-col justify-between"
                 >
                   <div className="space-y-4">
                     <div className="flex items-center space-x-3">
@@ -1346,6 +1437,12 @@ function App() {
 
         </div>
       </section>
+
+      <AnimatePresence>
+        {caseStudyOpen && (
+          <RiveCaseStudy onClose={() => setCaseStudyOpen(false)} />
+        )}
+      </AnimatePresence>
 
       <AnimatePresence>
         {selectedProject && (

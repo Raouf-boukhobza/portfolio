@@ -22,3 +22,31 @@
 button, a {
   transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
 }
+
+/* Horizontal tab rows and dense UI without visible scrollbars */
+.hide-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Keep secondary case-study copy readable and keyboard focus visible. */
+[data-rive-dialog] { --rive-secondary: #71717a; }
+[data-rive-dialog] .bg-zinc-950,
+[data-rive-dialog][aria-label$="diagram reader"] { --rive-secondary: #a1a1aa; }
+[data-rive-dialog] .text-zinc-400 { color: var(--rive-secondary); }
+[data-rive-dialog] :is(button, a, video, [tabindex]):focus-visible {
+  outline: 2px solid #059669;
+  outline-offset: 3px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  html, .scroll-smooth { scroll-behavior: auto !important; }
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    transition-duration: 0.01ms !important;
+  }
+}
